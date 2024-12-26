@@ -28,10 +28,10 @@ class Embedder:
         return docs
 
     def create_vector_store(self):
-        huggingface_embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2")
         persistent_directory = os.path.join(self.db_dir, self.filename)
         if not os.path.exists(persistent_directory):
+            huggingface_embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2")
             Chroma.from_documents(
                 self.load_text(), huggingface_embeddings, persist_directory=persistent_directory)
     
