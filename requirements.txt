@@ -1,0 +1,6 @@
+flask==2.0.1
+langchain
+langchain_community
+sentence-transformers
+chromadb
+langchain_ollama

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            max-width: 100%;
+        }
+        .chat-header {
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .chat-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+        .chat-input {
+            display: flex;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+        }
+        .chat-input button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-left: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background-color: #45a049;
+        }
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+            display: none;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        async function sendMessage() {
+            var input = document.getElementById('chat-input');
+            var message = input.value;
+            if (message.trim() !== '') {
+                var chatBox = document.getElementById('chat-box');
+                var userMessage = document.createElement('div');
+                userMessage.textContent = 'You: ' + message;
+                chatBox.appendChild(userMessage);
+                input.value = '';
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // Show the loader and disable the input field
+                var loader = document.getElementById('loader');
+                loader.style.display = 'block';
+                input.disabled = true;
+
+                // Call the API and display the response
+                try {
+                    let response = await fetch(`/get-response?query=${encodeURIComponent(message)}`);
+                    let data = await response.text();
+                    var botMessage = document.createElement('div');
+                    botMessage.textContent = 'Bot: ' + data;
+                    chatBox.appendChild(botMessage);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                } catch (error) {
+                    console.error('Error:', error);
+                } finally {
+                    // Hide the loader and enable the input field
+                    loader.style.display = 'none';
+                    input.disabled = false;
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Chatbot</div>
+        <div id="chat-box" class="chat-box"></div>
+        <div class="chat-input">
+            <input type="text" id="chat-input" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <div id="loader" class="loader"></div>
+    </div>
+</body>
+</html>
